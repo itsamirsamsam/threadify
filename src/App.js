@@ -99,32 +99,60 @@ export default function Threadify() {
           'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20241022',
-          max_tokens: 1024,
-          messages: [
-            {
-              role: 'user',
-              content: `You are an expert tutor helping a student understand a concept. 
+model: ‘claude-sonnet-4-5-20250929’,  // Updated model
+max_tokens: 1024,
+messages: [
+{
+role: ‘user’,
+content: `You are an expert adaptive tutor helping a student understand a concept. Your superpower is matching how each student thinks and communicates.
 
-STUDENT'S PARTIAL UNDERSTANDING: "${understood}"
+ORIGINAL TEXT:
+“${paragraph}”
 
-ORIGINAL TEXT: "${paragraph}"
+STUDENT’S PARTIAL UNDERSTANDING:
+“${understood}”
 
-STUDENT'S PREFERENCES:
-- Format: ${format === 'story' ? 'Narrative/story-based' : 'Bullet points and clear structure'}
-- Detail level: ${detail === 'brief' ? 'Keep it concise and simple' : 'Provide detailed explanations with examples'}
+STUDENT’S PREFERENCES:
+
+- Format: ${format === ‘story’ ? ‘Narrative/story-based’ : ‘Bullet points and clear structure’}
+- Detail level: ${detail === ‘brief’ ? ‘Keep it concise and simple’ : ‘Provide detailed explanations with examples’}
 
 YOUR TASK:
-1. Acknowledge what they understood (the threads they've grasped)
-2. Build outward from their understanding to complete the concept
-3. Use **bold** for key terms and important concepts
-4. Match their communication style (they sound ${understood.includes('!') || understood.includes('like') ? 'casual' : 'formal'})
-5. Generate an explanation that connects their understanding to the full picture
 
-Respond with ONLY the explanation, formatted as requested. Use **bold** for key terms.`,
-            },
-          ],
-        }),
+STEP 1 - ANALYZE their cognitive style from their response:
+
+- Do they use analogies/metaphors? (e.g., “like a…”, “kind of like…”)
+- Do they use technical/scientific terms? (e.g., proper vocabulary, formal language)
+- Do they tell stories or reference memories? (e.g., “I remember…”, “my teacher said…”)
+- Do they ask questions in their explanation? (e.g., “so it’s about…?”)
+- Are they visual/spatial thinkers? (e.g., “I picture it as…”, “I see it as…”)
+- Are they casual or formal in tone?
+
+STEP 2 - ACKNOWLEDGE their understanding:
+Start by validating what they got right. Use their own words where possible.
+
+STEP 3 - BUILD from their understanding using THEIR communication style:
+
+- If they used analogies → continue with similar analogies and metaphors
+- If they used technical terms → match that vocabulary level and precision
+- If they told stories → build a narrative that extends their story
+- If they asked questions → answer in a conversational Q&A style
+- If they’re visual → use spatial and descriptive language
+- If they’re casual → keep it conversational and friendly
+- If they’re formal → maintain professional clarity
+
+STEP 4 - FORMAT appropriately:
+
+- Use *bold* for key terms and concepts
+- ${format === ‘story’ ? ‘Write as a flowing narrative that builds naturally from their understanding’ : ‘Use clear structure with natural progression’}
+- ${detail === ‘brief’ ? ‘Keep it concise: 2-3 short paragraphs maximum’ : ‘Provide thorough explanation: 3-4 paragraphs with examples and depth’}
+
+CRITICAL: Match their language style throughout. If they say “like a battery”, don’t suddenly switch to “analogous to an electrochemical cell” unless they used that level of language first.
+
+Respond with ONLY the explanation. No meta-commentary about their learning style.`,
+},
+],
+}),
       });
 
       if (!response.ok) {
